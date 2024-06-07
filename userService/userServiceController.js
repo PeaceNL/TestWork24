@@ -23,25 +23,26 @@ class userServiceController {
         }
     }   
     async updateUser(req, res) {
-        
+        //Не совсем понятно что именно надо менять в пользователе и нужно ли сверять логин и пароль
+        //Поэтому меня то что в голову пришло
         try {
             const {login, password, newLogin, newPassword} = req.body; 
             const user = await pool.query("SELECT * FROM users WHERE login = $1", [login]);
             console.log(user.rows[0]);           
             
             if (user.rows.length === 0) {
-                return res.status(404).json({message: "User Not Found"});
+                return res.status(404).json({ message: "User Not Found" });
             }
             if (newLogin && newPassword) {
                 const a = await pool.query("UPDATE users SET password = $1, login = $2 WHERE id = $3", [newPassword, newLogin, user.rows[0].id]);
                 logger(user.rows[0].id, "User change login and password");
-                res.status(200).json({message: "User update"});
+                res.status(200).json({ message: "User update" });
             } else if (!newLogin && newPassword) {
                 await pool.query("UPDATE users SET password = $1 WHERE id=$2", [newPassword, user.rows[0].id]);
                 logger(user.rows[0].id, "User change password");
-                res.status(200).json({message: "User update"});
+                res.status(200).json({ message: "User update" });
             } else {
-                res.status(400).json({message: "Bad Request!"});
+                res.status(400).json({ message: "Bad Request!" });
             }
             
         } catch (error) {
