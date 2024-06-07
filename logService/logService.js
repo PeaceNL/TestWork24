@@ -8,6 +8,8 @@ const logServiceController = require("./logServiceController");
 logService.get("/", (req, res) => {
     res.send("Вас встречает сервис логов...");
 });
+logService.get('/story/:id', logServiceController.getStoryById);
+logService.post('/logger', logServiceController.logger);
 
 
 module.exports = logService;
