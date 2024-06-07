@@ -9,7 +9,7 @@ userService.get('/', (req,res) => {
 
 // TO DO: Сделать валидацию логина и пасса  
 userService.post("/createuser", userServiceController.createUser);
-userService.put("/updateuser/:login", userServiceController.updateUser);
+userService.put("/updateuser", userServiceController.updateUser);
 userService.get("/getusers", userServiceController.getUsers); 
 
 module.exports = userService;

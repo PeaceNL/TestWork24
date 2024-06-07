@@ -15,7 +15,7 @@ class logServiceController {
     async logger(req, res) {
         const {id, operation} = req.body;
         try {
-            await pool.query("INSERT INTO log (login, log) VALUES ($1, $2)", [id, operation]);
+            await pool.query("INSERT INTO log (user_id, log) VALUES ($1, $2)", [id, operation]);
             res.status(201).json({ message: "Log created!" });
         } catch (error) {
             console.log("Log Service Error!");

@@ -1,3 +1,4 @@
+const { log } = require("console");
 const pool = require("../db");
 const logger = require('./reqToLogService');
 
@@ -22,14 +23,30 @@ class userServiceController {
         }
     }   
     async updateUser(req, res) {
+        
         try {
-            const {login, password} = req.body;
+            const {login, password, newLogin, newPassword} = req.body; 
             const user = await pool.query("SELECT * FROM users WHERE login = $1", [login]);
-            const updateUser = await pool.query("UPDATE users SET password = $1 WHERE login = $2", [login]);//TODO: SDELAT NORMALNO
-            logger(user.rows[0].id, "Update")
+            console.log(user.rows[0]);           
+            
+            if (user.rows.length === 0) {
+                return res.status(404).json({message: "User Not Found"});
+            }
+            if (newLogin && newPassword) {
+                const a = await pool.query("UPDATE users SET password = $1, login = $2 WHERE id = $3", [newPassword, newLogin, user.rows[0].id]);
+                logger(user.rows[0].id, "User change login and password");
+                res.status(200).json({message: "User update"});
+            } else if (!newLogin && newPassword) {
+                await pool.query("UPDATE users SET password = $1 WHERE id=$2", [newPassword, user.rows[0].id]);
+                logger(user.rows[0].id, "User change password");
+                res.status(200).json({message: "User update"});
+            } else {
+                res.status(400).json({message: "Bad Request!"});
+            }
+            
         } catch (error) {
             console.log(`updateUser :` + error);
-            res.status(500).json({ message: 'something was wrong(' })
+            res.status(500).json({ message: 'something was wrong(' });
         }
     }
     async getUsers (req, res) {
@@ -39,7 +56,7 @@ class userServiceController {
             res.json({ Users: allUsers.rows});
         } catch (error) {
             console.log(`getUsers :` + error);
-            res.status(500).json({ message: 'something was wrong(' })
+            res.status(500).json({ message: 'something was wrong(' });
         }
     }
 }
